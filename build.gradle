@@ -1,1 +1,22 @@
 apply plugin: 'java'
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+    compile 'org.jetbrains:annotations:13.0'
+    compile "org.slf4j:slf4j-api:1.7.7"
+    runtime "ch.qos.logback:logback-classic:1.1.2"
+    testCompile 'junit:junit:4.11'
+}
+
+configurations.all {
+    resolutionStrategy.eachDependency { DependencyResolveDetails details ->
+
+        // use full hamcrest instead of core
+        if (details.requested.name == 'hamcrest-core') {
+            details.useTarget group: details.requested.group, name: 'hamcrest-all', version: details.requested.version
+        }
+    }
+}
