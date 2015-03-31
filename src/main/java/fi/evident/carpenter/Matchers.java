@@ -14,6 +14,9 @@ import static fi.evident.carpenter.utils.CollectionUtils.copyWithReplacedSubList
 import static fi.evident.carpenter.utils.CollectionUtils.copyWithReplacedValue;
 import static java.util.Arrays.asList;
 
+/**
+ * Various general {@link Matcher} implementations.
+ */
 public final class Matchers {
 
     private Matchers() {

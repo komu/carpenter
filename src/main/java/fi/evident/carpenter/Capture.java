@@ -42,7 +42,7 @@ public final class Capture<T> extends Matcher<T> {
 
     @NotNull
     public Matcher<T> save(@NotNull Matcher<T> matcher) {
-        return Matcher.of(value -> matcher.apply(value).flatMap(m -> fromCapture(this, m::rebuild, m.getConstraints().merge(constraints(value)))));
+        return Matcher.from(value -> matcher.apply(value).flatMap(m -> fromCapture(this, m::rebuild, m.getConstraints().merge(constraints(value)))));
     }
 
     @NotNull

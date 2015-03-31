@@ -13,7 +13,7 @@ public abstract class Matcher<T> implements Function<T,Match<T>> {
     public abstract Match<T> apply(@NotNull T t);
 
     @NotNull
-    public static <T> Matcher<T> of(@NotNull Function<T,Match<T>> function) {
+    public static <T> Matcher<T> from(@NotNull Function<T, Match<T>> function) {
         return new Matcher<T>() {
             @NotNull
             @Override
