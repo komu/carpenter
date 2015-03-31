@@ -5,23 +5,23 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Optional;
 import java.util.function.Function;
 
+/**
+ * Matcher is a
+ * @param <T>
+ */
 public abstract class Matcher<T> implements Function<T,Match<T>> {
 
-    @NotNull
-    public abstract Match<T> match(@NotNull T value);
-
     @Override
-    public Match<T> apply(T t) {
-        return match(t);
-    }
+    @NotNull
+    public abstract Match<T> apply(@NotNull T t);
 
     @NotNull
     public final Matcher<T> save(@NotNull Capture<T> capture) {
         return new Matcher<T>() {
             @NotNull
             @Override
-            public Match<T> match(@NotNull T value) {
-                Match<T> match = Matcher.this.match(value);
+            public Match<T> apply(@NotNull T value) {
+                Match<T> match = Matcher.this.apply(value);
                 if (match.isSuccess())
                     return capture.match(value, match::rebuild, match.constraints);
                 else
@@ -44,7 +44,7 @@ public abstract class Matcher<T> implements Function<T,Match<T>> {
 
     @NotNull
     public final Optional<T> rewrite(@NotNull T value, @NotNull Function<Match<T>,MatchRewrites> rewriteGenerator) {
-        Match<T> match = match(value);
+        Match<T> match = apply(value);
         if (match.isSuccess())
             return Optional.of(match.rebuild(rewriteGenerator.apply(match)));
         else
@@ -61,9 +61,9 @@ public abstract class Matcher<T> implements Function<T,Match<T>> {
         return new Matcher<T>() {
             @NotNull
             @Override
-            public Match<T> match(@NotNull T value) {
-                Match<T> match = Matcher.this.match(value);
-                return match.isSuccess() ? match : alternative.match(value);
+            public Match<T> apply(@NotNull T value) {
+                Match<T> match = Matcher.this.apply(value);
+                return match.isSuccess() ? match : alternative.apply(value);
             }
         };
     }

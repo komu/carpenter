@@ -29,7 +29,7 @@ public final class Capture<T> extends Matcher<T> {
 
     @NotNull
     @Override
-    public Match<T> match(@NotNull T value) {
+    public Match<T> apply(@NotNull T value) {
         return match(value, rewrites -> value, Constraints.empty());
     }
 

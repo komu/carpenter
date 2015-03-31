@@ -34,7 +34,7 @@ public final class Matchers {
         return new Matcher<T>() {
             @NotNull
             @Override
-            public Match<T> match(@NotNull T value) {
+            public Match<T> apply(@NotNull T value) {
                 return predicate.test(value) ? Match.constant(value) : Match.failure();
             }
         };
@@ -50,10 +50,10 @@ public final class Matchers {
         return new Matcher<Optional<T>>() {
             @NotNull
             @Override
-            public Match<Optional<T>> match(@NotNull Optional<T> value) {
+            public Match<Optional<T>> apply(@NotNull Optional<T> value) {
                 T v = value.orElse(null);
                 if (v != null)
-                    return Match.from(Optional::of, matcher.match(v));
+                    return Match.from(Optional::of, matcher.apply(v));
                 else
                     return Match.failure();
             }
@@ -65,9 +65,9 @@ public final class Matchers {
         return new Matcher<List<T>>() {
             @NotNull
             @Override
-            public Match<List<T>> match(@NotNull List<T> value) {
+            public Match<List<T>> apply(@NotNull List<T> value) {
                 for (int i = 0, len = value.size(); i < len; i++) {
-                    Match<T> m = matcher.match(value.get(i));
+                    Match<T> m = matcher.apply(value.get(i));
                     int index = i;
 
                     if (m.isSuccess())
@@ -83,12 +83,12 @@ public final class Matchers {
         return new Matcher<List<T>>() {
             @NotNull
             @Override
-            public Match<List<T>> match(@NotNull List<T> value) {
+            public Match<List<T>> apply(@NotNull List<T> value) {
                 List<Match<T>> prefixMatches = prefixMatches(value);
                 if (prefixMatches == null) return Match.failure();
 
                 List<T> suffix = value.subList(prefixMatches.size(), value.size());
-                Match<List<T>> suffixMatch = suffixMatcher.match(suffix);
+                Match<List<T>> suffixMatch = suffixMatcher.apply(suffix);
 
                 return Match.fromList(CollectionUtils::concat, prefixMatches, suffixMatch);
             }
@@ -102,7 +102,7 @@ public final class Matchers {
 
                 int i = 0;
                 for (Matcher<T> matcher : prefixMatchers) {
-                    Match<T> m = matcher.match(list.get(i++));
+                    Match<T> m = matcher.apply(list.get(i++));
                     if (m.isSuccess())
                         matches.add(m);
                     else
@@ -125,7 +125,7 @@ public final class Matchers {
         return new Matcher<List<T>>() {
             @NotNull
             @Override
-            public Match<List<T>> match(@NotNull List<T> value) {
+            public Match<List<T>> apply(@NotNull List<T> value) {
                 // Pre-allocate a list for matches so that we don't have to create new for every attempt
                 List<Match<T>> matches = new ArrayList<>(matchers.size());
                 for (int i = 0, max = value.size() - matchers.size() + 1; i < max; i++) {
@@ -142,7 +142,7 @@ public final class Matchers {
 
                 int i = index;
                 for (Matcher<T> matcher : matchers) {
-                    Match<T> m = matcher.match(values.get(i++));
+                    Match<T> m = matcher.apply(values.get(i++));
                     if (m.isSuccess())
                         matches.add(m);
                     else
@@ -165,7 +165,7 @@ public final class Matchers {
         return new Matcher<List<T>>() {
             @NotNull
             @Override
-            public Match<List<T>> match(@NotNull List<T> value) {
+            public Match<List<T>> apply(@NotNull List<T> value) {
                 if (value.size() != matchers.size())
                     return Match.failure();
 
@@ -174,7 +174,7 @@ public final class Matchers {
                 List<Match<T>> matches = new ArrayList<>(matchers.size());
 
                 while (valuesIterator.hasNext()) {
-                    Match<T> m = matchersIterator.next().match(valuesIterator.next());
+                    Match<T> m = matchersIterator.next().apply(valuesIterator.next());
                     if (m.isSuccess())
                         matches.add(m);
                     else

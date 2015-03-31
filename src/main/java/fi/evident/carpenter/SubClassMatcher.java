@@ -24,7 +24,7 @@ public abstract class SubClassMatcher<T, S extends T> extends Matcher<T> {
 
     @NotNull
     @Override
-    public final Match<T> match(@NotNull T value) {
+    public final Match<T> apply(@NotNull T value) {
         if (inputType.isInstance(value))
             return matchSafely(inputType.cast(value));
         else
@@ -48,7 +48,7 @@ public abstract class SubClassMatcher<T, S extends T> extends Matcher<T> {
         return new Matcher<S>() {
             @NotNull
             @Override
-            public Match<S> match(@NotNull S value) {
+            public Match<S> apply(@NotNull S value) {
                 return matchable.match(value, matcher);
             }
         };

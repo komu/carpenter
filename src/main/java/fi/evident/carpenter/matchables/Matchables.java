@@ -19,7 +19,7 @@ public final class Matchables {
                                @NotNull Function<V, S> ctor,
                                @NotNull Function<? super T, ? extends V> getter) {
         return (value, matcher) ->
-                withType(type, value, (T v) -> Match.from(ctor, matcher.match(getter.apply(v))));
+                withType(type, value, (T v) -> Match.from(ctor, matcher.apply(getter.apply(v))));
     }
 
     @NotNull
@@ -29,7 +29,7 @@ public final class Matchables {
                                     @NotNull Function<? super T, ? extends V1> getter1,
                                     @NotNull Function<? super T, ? extends V2> getter2) {
         return (value, matcher1, matcher2) ->
-                withType(type, value, (T v) -> Match.from(ctor, matcher1.match(getter1.apply(v)), matcher2.match(getter2.apply(v))));
+                withType(type, value, (T v) -> Match.from(ctor, matcher1.apply(getter1.apply(v)), matcher2.apply(getter2.apply(v))));
     }
 
     @NotNull
@@ -40,7 +40,7 @@ public final class Matchables {
                                         @NotNull Function<? super T, ? extends V2> getter2,
                                         @NotNull Function<? super T, ? extends V3> getter3) {
         return (value, matcher1, matcher2, matcher3) ->
-                withType(type, value, (T v) -> Match.from(ctor, matcher1.match(getter1.apply(v)), matcher2.match(getter2.apply(v)), matcher3.match(getter3.apply(v))));
+                withType(type, value, (T v) -> Match.from(ctor, matcher1.apply(getter1.apply(v)), matcher2.apply(getter2.apply(v)), matcher3.apply(getter3.apply(v))));
     }
 
     @NotNull
@@ -52,7 +52,7 @@ public final class Matchables {
                                             @NotNull Function<? super T, ? extends V3> getter3,
                                             @NotNull Function<? super T, ? extends V4> getter4) {
         return (value, matcher1, matcher2, matcher3, matcher4) ->
-                withType(type, value, (T v) -> Match.from(ctor, matcher1.match(getter1.apply(v)), matcher2.match(getter2.apply(v)), matcher3.match(getter3.apply(v)), matcher4.match(getter4.apply(v))));
+                withType(type, value, (T v) -> Match.from(ctor, matcher1.apply(getter1.apply(v)), matcher2.apply(getter2.apply(v)), matcher3.apply(getter3.apply(v)), matcher4.apply(getter4.apply(v))));
     }
 
     @NotNull
