@@ -1,5 +1,6 @@
 package fi.evident.carpenter;
 
+import fi.evident.carpenter.utils.NameSequence;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -12,13 +13,14 @@ import java.util.function.Function;
 public final class Capture<T> extends Matcher<T> {
 
     /** Name for debugging purposes */
+    @NotNull
     private final String name;
 
-    private static int sequence = 1;
+    @NotNull
+    private static final NameSequence defaultNameSequence = new NameSequence("capture");
 
-    @SuppressWarnings("AssignmentToStaticFieldFromInstanceMethod")
     public Capture() {
-        this("capture" + sequence++);
+        this(defaultNameSequence.next());
     }
 
     public Capture(@NotNull String name) {
