@@ -3,27 +3,31 @@ package fi.evident.carpenter;
 import fi.evident.carpenter.utils.CollectionUtils;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-import static fi.evident.carpenter.MatchConstraints.mergeConstraints;
-
 public final class Match<E> {
 
     @NotNull
-    private static final Match<Object> FAILURE = new Match<>(r -> { throw new UnsupportedOperationException(); }, MatchConstraints.invalid());
+    private static final Match<Object> FAILURE = new Match<>(r -> { throw new UnsupportedOperationException(); }, Constraints.invalid());
 
     @NotNull
     private final Function<MatchRewrites, E> rebuilder;
 
     @NotNull
-    final MatchConstraints constraints;
+    final Constraints constraints;
 
-    private Match(@NotNull Function<MatchRewrites, E> rebuilder, @NotNull MatchConstraints constraints) {
+    private Match(@NotNull Function<MatchRewrites, E> rebuilder, @NotNull Constraints constraints) {
         this.rebuilder = rebuilder;
         this.constraints = constraints;
+    }
+
+    @NotNull
+    public static <V> Constraints mergeAll(@NotNull Collection<Match<V>> matches) {
+        return matches.stream().map(m -> m.constraints).collect(Constraints.mergeAll());
     }
 
     @NotNull
@@ -47,14 +51,14 @@ public final class Match<E> {
     }
 
     @NotNull
-    private static <T> Match<T> from(@NotNull Function<MatchRewrites, T> rebuilder, @NotNull MatchConstraints constraints) {
+    private static <T> Match<T> from(@NotNull Function<MatchRewrites, T> rebuilder, @NotNull Constraints constraints) {
         if (!constraints.isValid()) return failure();
         return new Match<>(rebuilder, constraints);
     }
 
     @NotNull
-    public static <T> Match<T> fromCapture(@NotNull Capture<T> capture, @NotNull T value, @NotNull Function<MatchRewrites, T> defaultValue, @NotNull MatchConstraints constraints) {
-        MatchConstraints newConstraints = constraints.merge(MatchConstraints.fromCapture(capture, value));
+    public static <T> Match<T> fromCapture(@NotNull Capture<T> capture, @NotNull T value, @NotNull Function<MatchRewrites, T> defaultValue, @NotNull Constraints constraints) {
+        Constraints newConstraints = constraints.merge(Constraints.forValue(capture, value));
         return from(rewrites -> rewrites.getReplacedValue(capture).orElseGet(() -> defaultValue.apply(rewrites)), newConstraints);
     }
 
@@ -88,20 +92,20 @@ public final class Match<E> {
 
     @NotNull
     public static <T, V> Match<T> fromList(@NotNull Function<List<V>, T> builder, @NotNull List<Match<V>> matches) {
-        MatchConstraints constraints = mergeConstraints(matches);
+        Constraints constraints = mergeAll(matches);
         return Match.from(rewrites -> builder.apply(CollectionUtils.map(matches, m -> m.rebuild(rewrites))), constraints);
     }
 
     @NotNull
     public static <T, V, V2> Match<T> fromList(@NotNull BiFunction<List<V>, V2, T> builder, @NotNull List<Match<V>> matches, @NotNull Match<V2> m2) {
         if (m2.isFailure()) return failure();
-        MatchConstraints constraints = mergeConstraints(matches).merge(m2.constraints);
+        Constraints constraints = mergeAll(matches).merge(m2.constraints);
         return Match.from(rewrites -> builder.apply(CollectionUtils.map(matches, m -> m.rebuild(rewrites)), m2.rebuild(rewrites)), constraints);
     }
 
     @NotNull
     public static <T> Match<List<T>> fromList(@NotNull List<Match<T>> matches) {
-        return Match.from(rewrites -> CollectionUtils.map(matches, (Match<T> m) -> m.rebuild(rewrites)), mergeConstraints(matches));
+        return Match.from(rewrites -> CollectionUtils.map(matches, (Match<T> m) -> m.rebuild(rewrites)), mergeAll(matches));
     }
 
     @NotNull
@@ -117,7 +121,7 @@ public final class Match<E> {
 
     @NotNull
     public static <T> Match<T> constant(T value) {
-        return from(rewrites -> value, MatchConstraints.empty());
+        return from(rewrites -> value, Constraints.empty());
     }
 
     public void ifSuccess(@NotNull Consumer<Match<E>> consumer) {

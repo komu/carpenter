@@ -28,7 +28,7 @@ public final class Capture<T> extends Matcher<T> {
     @NotNull
     @Override
     public Match<T> match(@NotNull T value) {
-        return match(value, rewrites -> value, MatchConstraints.empty());
+        return match(value, rewrites -> value, Constraints.empty());
     }
 
     @Override
@@ -37,7 +37,7 @@ public final class Capture<T> extends Matcher<T> {
     }
 
     @Nullable
-    Match<T> match(@NotNull T value, @NotNull Function<MatchRewrites, T> defaultValue, @NotNull MatchConstraints constraints) {
+    Match<T> match(@NotNull T value, @NotNull Function<MatchRewrites, T> defaultValue, @NotNull Constraints constraints) {
         return Match.fromCapture(this, value, defaultValue, constraints);
     }
 }
