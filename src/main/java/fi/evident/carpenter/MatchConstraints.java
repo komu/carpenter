@@ -1,10 +1,12 @@
 package fi.evident.carpenter;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 public final class MatchConstraints {
 
@@ -44,7 +46,7 @@ public final class MatchConstraints {
 
         for (Map.Entry<Capture<?>, Object> entry : constraints.map.entrySet()) {
             Object existing = result.map.putIfAbsent(entry.getKey(), entry.getValue());
-            if (existing != null && !existing.equals(entry.getValue()))
+            if ((existing != null || map.containsKey(entry.getKey())) && !Objects.equals(existing, entry.getValue()))
                 return INVALID;
         }
 
@@ -52,7 +54,7 @@ public final class MatchConstraints {
     }
 
     @NotNull
-    public static <T> MatchConstraints fromCapture(@NotNull Capture<T> capture, @NotNull T value) {
+    public static <T> MatchConstraints fromCapture(@NotNull Capture<T> capture, @Nullable T value) {
         MatchConstraints constraints = new MatchConstraints();
         constraints.map.put(capture, value);
         return constraints;
@@ -64,11 +66,20 @@ public final class MatchConstraints {
     }
 
     public <V> V getValue(@NotNull Capture<V> capture) {
+        if (!isValid()) throw new IllegalStateException("can't get value from invalid constraints");
+
         @SuppressWarnings("unchecked")
         V value = (V) map.get(capture);
         if (value != null)
             return value;
         else
             throw new RuntimeException("no value for capture " + capture);
+    }
+
+    @Override
+    public String toString() {
+        if (!isValid()) return "invalid";
+
+        return "[Constraints=" + map + ']';
     }
 }
