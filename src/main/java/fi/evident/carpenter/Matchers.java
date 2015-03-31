@@ -10,8 +10,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 
-import static fi.evident.carpenter.utils.CollectionUtils.copyWithSubListReplaced;
-import static fi.evident.carpenter.utils.CollectionUtils.copyWithValueReplacedAtIndex;
+import static fi.evident.carpenter.utils.CollectionUtils.copyWithReplacedSubList;
+import static fi.evident.carpenter.utils.CollectionUtils.copyWithReplacedValue;
 import static java.util.Arrays.asList;
 
 public final class Matchers {
@@ -71,7 +71,7 @@ public final class Matchers {
                     int index = i;
 
                     if (m.isSuccess())
-                        return Match.from(v -> copyWithValueReplacedAtIndex(value, index, v), m);
+                        return Match.from(v -> copyWithReplacedValue(value, index, v), m);
                 }
                 return Match.failure();
             }
@@ -131,7 +131,7 @@ public final class Matchers {
                 for (int i = 0, max = value.size() - matchers.size() + 1; i < max; i++) {
                     if (matchesAt(value, i, matches)) {
                         int index = i;
-                        return Match.fromList(vs -> copyWithSubListReplaced(value, index, vs), matches);
+                        return Match.fromList(vs -> copyWithReplacedSubList(value, index, vs), matches);
                     }
                 }
                 return Match.failure();
