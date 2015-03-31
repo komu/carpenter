@@ -19,10 +19,10 @@ import static java.util.Collections.singletonMap;
 public abstract class Constraints {
 
     @NotNull
-    private static final Constraints EMPTY_CONSTRAINTS = new Constraints.DefaultConstraints(emptyMap());
+    private static final Constraints EMPTY_CONSTRAINTS = new DefaultConstraints(emptyMap());
 
     @NotNull
-    private static final Constraints INVALID_CONSTRAINTS = new Constraints.InvalidConstraints();
+    private static final Constraints INVALID_CONSTRAINTS = new InvalidConstraints();
 
     private Constraints() { }
 
@@ -84,7 +84,7 @@ public abstract class Constraints {
     }
 
     @NotNull
-    private Constraints merge(@NotNull DefaultConstraints c1, @NotNull DefaultConstraints c2) {
+    private static Constraints merge(@NotNull DefaultConstraints c1, @NotNull DefaultConstraints c2) {
         Map<Capture<?>,Object> result = new HashMap<>();
 
         result.putAll(c1.values);
@@ -166,7 +166,7 @@ public abstract class Constraints {
 
         @Override
         public String toString() {
-            return "Constraints[values=" + values+ "]";
+            return "Constraints[values=" + values+ ']';
         }
     }
 
