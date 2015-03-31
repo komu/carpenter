@@ -1,5 +1,7 @@
 package fi.evident.carpenter;
 
+import fi.evident.carpenter.functions.Function3;
+import fi.evident.carpenter.functions.Function4;
 import fi.evident.carpenter.utils.CollectionUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -77,14 +79,14 @@ public final class Match<E> {
     }
 
     @NotNull
-    public static <T, V1, V2, V3> Match<T> from(@NotNull TernaryFunction<V1, V2, V3, T> builder, @NotNull Match<V1> m1, @NotNull Match<V2> m2, @NotNull Match<V3> m3) {
+    public static <T, V1, V2, V3> Match<T> from(@NotNull Function3<V1, V2, V3, T> builder, @NotNull Match<V1> m1, @NotNull Match<V2> m2, @NotNull Match<V3> m3) {
         if (m1.isFailure() || m2.isFailure() || m3.isFailure()) return failure();
 
         return from(rewrites -> builder.apply(m1.rebuild(rewrites), m2.rebuild(rewrites), m3.rebuild(rewrites)), m1.constraints.merge(m2.constraints).merge(m3.constraints));
     }
 
     @NotNull
-    public static <T, V1, V2, V3, V4> Match<T> from(@NotNull QuadFunction<V1, V2, V3, V4, T> builder, @NotNull Match<V1> m1, @NotNull Match<V2> m2, @NotNull Match<V3> m3, @NotNull Match<V4> m4) {
+    public static <T, V1, V2, V3, V4> Match<T> from(@NotNull Function4<V1, V2, V3, V4, T> builder, @NotNull Match<V1> m1, @NotNull Match<V2> m2, @NotNull Match<V3> m3, @NotNull Match<V4> m4) {
         if (m1.isFailure() || m2.isFailure() || m3.isFailure() || m4.isFailure()) return failure();
 
         return from(rewrites -> builder.apply(m1.rebuild(rewrites), m2.rebuild(rewrites), m3.rebuild(rewrites), m4.rebuild(rewrites)), m1.constraints.merge(m2.constraints).merge(m3.constraints).merge(m4.constraints));
@@ -129,13 +131,4 @@ public final class Match<E> {
             consumer.accept(this);
     }
 
-    @FunctionalInterface
-    public interface TernaryFunction<V1, V2, V3, T> {
-        T apply(V1 v1, V2 v2, V3 v3);
-    }
-
-    @FunctionalInterface
-    public interface QuadFunction<V1, V2, V3, V4, T> {
-        T apply(V1 v1, V2 v2, V3 v3, V4 v4);
-    }
 }

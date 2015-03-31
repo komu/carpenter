@@ -1,14 +1,19 @@
 package fi.evident.carpenter;
 
+import fi.evident.carpenter.functions.Function3;
+import fi.evident.carpenter.functions.Function4;
+import fi.evident.carpenter.matchables.Matchable1;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
+import static fi.evident.carpenter.matchables.Matchables.matchable;
+
 /**
  * Base class for matchers that work with a specific sub class of S.
  */
-public abstract class SubClassMatcher<T,S extends T> extends Matcher<T> {
+public abstract class SubClassMatcher<T, S extends T> extends Matcher<T> {
 
     @NotNull
     private final Class<? extends S> inputType;
@@ -33,13 +38,18 @@ public abstract class SubClassMatcher<T,S extends T> extends Matcher<T> {
     @NotNull
     public static <S, T extends S, V> Matcher<S> of(@NotNull Class<T> type,
                                                     @NotNull Function<V, S> ctor,
-                                                    @NotNull Function<T, Match<V>> matcher) {
-        return new SubClassMatcher<S, T>(type) {
+                                                    @NotNull Function<T,V> getter,
+                                                    @NotNull Matcher<V> matcher) {
+        return of(matcher, matchable(type, ctor, getter));
+    }
 
+    @NotNull
+    public static <S, V> Matcher<S> of(@NotNull Matcher<V> matcher, @NotNull Matchable1<S, V> matchable) {
+        return new Matcher<S>() {
             @NotNull
             @Override
-            protected Match<S> matchSafely(@NotNull T value) {
-                return Match.from(ctor, matcher.apply(value));
+            public Match<S> match(@NotNull S value) {
+                return matchable.match(value, matcher);
             }
         };
     }
@@ -61,7 +71,7 @@ public abstract class SubClassMatcher<T,S extends T> extends Matcher<T> {
 
     @NotNull
     public static <S, T extends S, V1, V2, V3> Matcher<S> of(@NotNull Class<T> type,
-                                                             @NotNull Match.TernaryFunction<V1, V2, V3, S> ctor,
+                                                             @NotNull Function3<V1, V2, V3, S> ctor,
                                                              @NotNull Function<T, Match<V1>> matcher1,
                                                              @NotNull Function<T, Match<V2>> matcher2,
                                                              @NotNull Function<T, Match<V3>> matcher3) {
@@ -77,7 +87,7 @@ public abstract class SubClassMatcher<T,S extends T> extends Matcher<T> {
 
     @NotNull
     public static <S, T extends S, V1, V2, V3, V4> Matcher<S> of(@NotNull Class<T> type,
-                                                                 @NotNull Match.QuadFunction<V1, V2, V3, V4, S> ctor,
+                                                                 @NotNull Function4<V1, V2, V3, V4, S> ctor,
                                                                  @NotNull Function<T, Match<V1>> matcher1,
                                                                  @NotNull Function<T, Match<V2>> matcher2,
                                                                  @NotNull Function<T, Match<V3>> matcher3,

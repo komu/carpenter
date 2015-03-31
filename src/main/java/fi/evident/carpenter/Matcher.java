@@ -5,10 +5,15 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Optional;
 import java.util.function.Function;
 
-public abstract class Matcher<T> {
+public abstract class Matcher<T> implements Function<T,Match<T>> {
 
     @NotNull
     public abstract Match<T> match(@NotNull T value);
+
+    @Override
+    public Match<T> apply(T t) {
+        return match(t);
+    }
 
     @NotNull
     public final Matcher<T> save(@NotNull Capture<T> capture) {
