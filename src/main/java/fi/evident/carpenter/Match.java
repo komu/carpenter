@@ -95,19 +95,19 @@ public final class Match<E> {
     @NotNull
     public static <T, V> Match<T> fromList(@NotNull Function<List<V>, T> builder, @NotNull List<Match<V>> matches) {
         Constraints constraints = mergeAll(matches);
-        return Match.from(rewrites -> builder.apply(CollectionUtils.map(matches, m -> m.rebuild(rewrites))), constraints);
+        return from(rewrites -> builder.apply(CollectionUtils.map(matches, m -> m.rebuild(rewrites))), constraints);
     }
 
     @NotNull
     public static <T, V, V2> Match<T> fromList(@NotNull BiFunction<List<V>, V2, T> builder, @NotNull List<Match<V>> matches, @NotNull Match<V2> m2) {
         if (m2.isFailure()) return failure();
         Constraints constraints = mergeAll(matches).merge(m2.constraints);
-        return Match.from(rewrites -> builder.apply(CollectionUtils.map(matches, m -> m.rebuild(rewrites)), m2.rebuild(rewrites)), constraints);
+        return from(rewrites -> builder.apply(CollectionUtils.map(matches, m -> m.rebuild(rewrites)), m2.rebuild(rewrites)), constraints);
     }
 
     @NotNull
     public static <T> Match<List<T>> fromList(@NotNull List<Match<T>> matches) {
-        return Match.from(rewrites -> CollectionUtils.map(matches, (Match<T> m) -> m.rebuild(rewrites)), mergeAll(matches));
+        return from(rewrites -> CollectionUtils.map(matches, (Match<T> m) -> m.rebuild(rewrites)), mergeAll(matches));
     }
 
     @NotNull
@@ -118,7 +118,7 @@ public final class Match<E> {
     @NotNull
     public <T> Match<T> map(@NotNull Function<? super E, ? extends T> mapper) {
         if (isFailure()) return failure();
-        return Match.from(rewrites -> mapper.apply(rebuild(rewrites)), constraints);
+        return from(rewrites -> mapper.apply(rebuild(rewrites)), constraints);
     }
 
     @NotNull
@@ -130,5 +130,4 @@ public final class Match<E> {
         if (isSuccess())
             consumer.accept(this);
     }
-
 }

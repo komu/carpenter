@@ -2298,7 +2298,7 @@
     <inspection_tool class="SqlResolveInspection" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="SqlShouldBeInGroupByInspection" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="SqlTypeInspection" enabled="false" level="WARNING" enabled_by_default="false" />
-    <inspection_tool class="StandardVariableNames" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="StandardVariableNames" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="StatementsPerFunctionJS" enabled="false" level="WARNING" enabled_by_default="false">
       <option name="m_limit" value="30" />
     </inspection_tool>
