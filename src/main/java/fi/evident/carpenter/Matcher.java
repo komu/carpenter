@@ -50,8 +50,12 @@ public abstract class Matcher<T> implements Function<T,Match<T>> {
         return apply(value).rewrite(rewriteGenerator);
     }
 
+    /**
+     * Returns a matcher that calls {@code alternative} if the match fails.
+     */
     @NotNull
     public final Matcher<T> or(@NotNull Matcher<T> alternative) {
+        // TODO: merging constraints could fail later, perhaps we'll need to return both matches?
         return new Matcher<T>() {
             @NotNull
             @Override

@@ -76,13 +76,25 @@ public abstract class Match<T> {
         return constraints.isValid() ? new SuccessMatch<>(rebuilder, constraints) : failure();
     }
 
+    /**
+     * If this match is successful, calls {@code mapper} with it and return result. Otherwise returns invalid match.
+     */
     @NotNull
-    public abstract Match<T> flatMap(@NotNull Function<Match<T>, Match<T>> supplier);
+    public abstract Match<T> flatMap(@NotNull Function<Match<T>, Match<T>> mapper);
 
+    /**
+     * Returns a successful match that produces given value.
+     */
     @NotNull
     public static <T> Match<T> constant(T value) {
         return from(rewrites -> value, Constraints.empty());
     }
+
+    /**
+     * If the match is successfull, rewrites it and returns the value.
+     */
+    @NotNull
+    public abstract Optional<T> rewrite(@NotNull BiConsumer<Match<T>, MatchRewrites> rewriteGenerator);
 
     @NotNull
     public static <T, V> Match<T> from(@NotNull Function<V, T> builder, @NotNull Match<V> match) {
@@ -134,9 +146,6 @@ public abstract class Match<T> {
         return from(rewrites -> CollectionUtils.map(matches, m -> m.rebuild(rewrites)), mergedConstraints(matches));
     }
 
-    @NotNull
-    public abstract Optional<T> rewrite(@NotNull BiConsumer<Match<T>, MatchRewrites> rewriteGenerator);
-
     /**
      * Represents a successful match.
      */
@@ -180,8 +189,8 @@ public abstract class Match<T> {
 
         @NotNull
         @Override
-        public Match<T> flatMap(@NotNull Function<Match<T>, Match<T>> supplier) {
-            return supplier.apply(this);
+        public Match<T> flatMap(@NotNull Function<Match<T>, Match<T>> mapper) {
+            return mapper.apply(this);
         }
 
         @NotNull
@@ -223,7 +232,7 @@ public abstract class Match<T> {
 
         @NotNull
         @Override
-        public Match<T> flatMap(@NotNull Function<Match<T>, Match<T>> supplier) {
+        public Match<T> flatMap(@NotNull Function<Match<T>, Match<T>> mapper) {
             return this;
         }
 
