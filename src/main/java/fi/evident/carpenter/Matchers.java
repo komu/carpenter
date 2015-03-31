@@ -149,7 +149,7 @@ public final class Matchers {
                         return false;
                 }
 
-                return Match.mergeAll(matches).isValid();
+                return Match.mergedConstraints(matches).isValid();
             }
         };
     }

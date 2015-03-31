@@ -8,6 +8,9 @@ import org.jetbrains.annotations.NotNull;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
+/**
+ * Constructs {@code MatchableX} instances from accessor and constructor references.
+ */
 public final class Matchables {
 
     private Matchables() {
